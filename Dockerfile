@@ -1,12 +1,13 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-# Install ffmpeg and yt-dlp
-RUN apk update && apk add --no-cache \
+# Install ffmpeg, python3, and pip
+RUN apt-get update && apt-get install -y \
     ffmpeg \
     python3 \
-    py3-pip
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install yt-dlp using pip
+# Install yt-dlp
 RUN pip3 install --no-cache-dir --break-system-packages yt-dlp
 
 WORKDIR /app
@@ -15,10 +16,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install npm dependencies
-RUN npm ci --only=production
+RUN npm install --production
 
 # Copy the rest of the application
 COPY . .
+
+# Expose port for keep-alive server
+EXPOSE 10000
 
 # Start the bot
 CMD ["node", "bot.js"]
