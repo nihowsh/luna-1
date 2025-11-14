@@ -1,39 +1,36 @@
-# Render Deployment Setup
+# Render Deployment Setup Guide
 
-This Discord bot requires `yt-dlp` and `ffmpeg` for video downloading functionality.
+This Discord bot requires `yt-dlp` and `ffmpeg` for the `/downloadvideo` command to work.
 
-## Required System Dependencies
+## Quick Setup (Recommended)
 
-Your Render service needs the following system packages installed:
+I've created a `render-build.sh` script that automatically installs all dependencies.
 
-1. **yt-dlp** - For downloading videos from YouTube, TikTok, Instagram, etc.
-2. **ffmpeg** - For video compression and processing
+### Step-by-Step Instructions:
 
-## Installation on Render
+1. **Push your code to GitHub** (make sure `render-build.sh` is included)
 
-### Option 1: Using Build Command
+2. **In Render Dashboard**, configure your service:
+   - **Build Command**: `bash render-build.sh`
+   - **Start Command**: `node bot.js`
+   - **Environment**: Node
 
-Add this to your Render service's **Build Command**:
+3. **Add Environment Variables** in Render:
+   - `DISCORD_TOKEN` = Your Discord bot token
+
+4. **Deploy!**
+
+That's it! The build script will automatically install:
+- ✅ ffmpeg (for video compression)
+- ✅ yt-dlp (for downloading videos)
+- ✅ npm packages
+
+## Alternative: Manual Build Command
+
+If you prefer not to use the script, set your **Build Command** to:
 
 ```bash
 apt-get update && apt-get install -y ffmpeg python3-pip && pip3 install yt-dlp && npm install
-```
-
-### Option 2: Using a Shell Script
-
-Create a file named `render-build.sh` in your project root:
-
-```bash
-#!/bin/bash
-apt-get update
-apt-get install -y ffmpeg python3-pip
-pip3 install yt-dlp
-npm install
-```
-
-Then set your Build Command to:
-```bash
-bash render-build.sh
 ```
 
 ## Render Service Configuration
