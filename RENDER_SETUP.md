@@ -1,73 +1,118 @@
-# Render Deployment Setup Guide
+# Render Free Tier Deployment Guide
 
-This Discord bot requires `yt-dlp` and `ffmpeg` for the `/downloadvideo` command to work.
+## ✅ This Works on Render's FREE Tier!
 
-## Quick Setup (Recommended)
+Your bot uses a **Dockerfile** to install `ffmpeg` and `yt-dlp`, which works perfectly on Render's free tier.
 
-I've created a `render-build.sh` script that automatically installs all dependencies.
+---
 
-### Step-by-Step Instructions:
+## 📋 Step-by-Step Instructions
 
-1. **Push your code to GitHub** (make sure `render-build.sh` is included)
+### 1. **Push to GitHub**
 
-2. **In Render Dashboard**, configure your service:
-   - **Build Command**: `bash render-build.sh`
-   - **Start Command**: `node bot.js`
-   - **Environment**: Node
-
-3. **Add Environment Variables** in Render:
-   - `DISCORD_TOKEN` = Your Discord bot token
-
-4. **Deploy!**
-
-That's it! The build script will automatically install:
-- ✅ ffmpeg (for video compression)
-- ✅ yt-dlp (for downloading videos)
-- ✅ npm packages
-
-## Alternative: Manual Build Command
-
-If you prefer not to use the script, set your **Build Command** to:
+Make sure these files are in your repository:
+- ✅ `Dockerfile` (already created)
+- ✅ `.dockerignore` (already created)
+- ✅ `bot.js` and all other bot files
+- ✅ `package.json`
 
 ```bash
-apt-get update && apt-get install -y ffmpeg python3-pip && pip3 install yt-dlp && npm install
+git add .
+git commit -m "Add Docker support for Render"
+git push origin main
 ```
 
-## Render Service Configuration
+### 2. **Create Web Service on Render**
 
-1. **Build Command**: Use one of the options above
-2. **Start Command**: `node bot.js`
-3. **Environment**: Node
-4. **Plan**: Make sure you have enough resources (Free tier should work)
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click **"New +"** → **"Web Service"**
+3. Connect your GitHub repository
+4. Configure settings:
 
-## Environment Variables
+   **Name:** `your-discord-bot` (choose any name)
+   
+   **Environment:** `Docker`
+   
+   **Region:** Choose closest to you
+   
+   **Branch:** `main` (or your default branch)
+   
+   **Instance Type:** `Free`
 
-Make sure to set your Discord bot token in Render's environment variables:
-- `DISCORD_TOKEN` - Your Discord bot token
+5. Click **"Create Web Service"**
 
-## Testing Locally
+### 3. **Add Environment Variables**
 
-To test video downloads locally on Replit:
-1. The dependencies are already installed
-2. Set your Discord token
-3. Use the `/downloadvideo` command with links from:
-   - YouTube
-   - TikTok
-   - Instagram
-   - RedGifs
+In your Render service settings:
 
-## Troubleshooting
+1. Go to **"Environment"** tab
+2. Add your Discord token:
+   - **Key:** `DISCORD_TOKEN`
+   - **Value:** Your actual Discord bot token
 
-If you still get "spawn yt-dlp ENOENT" error on Render:
-1. Check that the build command ran successfully in Render logs
-2. Verify yt-dlp is in the PATH: add `which yt-dlp` to your start command temporarily
-3. Try using the full path: `/usr/local/bin/yt-dlp` instead of just `yt-dlp`
+3. Click **"Save Changes"**
 
-## Supported Platforms
+### 4. **Deploy!**
 
-The `/downloadvideo` command supports:
-- ✅ YouTube
-- ✅ TikTok
-- ✅ Instagram
-- ✅ RedGifs (using direct API)
-- ✅ Any platform supported by yt-dlp
+Render will automatically:
+- ✅ Build your Docker image (installs ffmpeg + yt-dlp)
+- ✅ Deploy your bot
+- ✅ Keep it running 24/7 (with some sleep after inactivity on free tier)
+
+---
+
+## 🎥 What's Included
+
+The Dockerfile installs:
+- ✅ **Node.js 20** (Alpine Linux - lightweight)
+- ✅ **ffmpeg** (for video compression)
+- ✅ **yt-dlp** (for downloading videos)
+- ✅ All your npm packages
+
+---
+
+## 🔧 Supported Platforms
+
+Your `/downloadvideo` command now works with:
+- ✅ **YouTube**
+- ✅ **TikTok**
+- ✅ **Instagram**
+- ✅ **RedGifs**
+- ✅ Any platform yt-dlp supports
+
+---
+
+## ⚠️ Important Notes
+
+### Free Tier Limitations:
+- **Sleeps after 15 minutes** of inactivity
+- **~50 second cold start** when waking up
+- **512 MB RAM** limit
+
+### Keep Your Bot Awake (Optional):
+Use a service like [UptimeRobot](https://uptimerobot.com) to ping your bot every 14 minutes.
+
+---
+
+## 🐛 Troubleshooting
+
+### Build Fails?
+- Check Render logs in Dashboard → Logs
+- Verify `Dockerfile` was pushed to GitHub
+- Ensure you selected "Docker" as environment
+
+### Bot Not Responding?
+- Check Environment variables are set correctly
+- Verify `DISCORD_TOKEN` is valid
+- Check logs for errors
+
+### Video Download Still Fails?
+- Make sure you redeployed AFTER adding the Dockerfile
+- Check Render logs to confirm ffmpeg and yt-dlp were installed
+- Test with a simple YouTube link first
+
+---
+
+## ✨ You're Done!
+
+Once deployed, your bot will work exactly like it does on Replit, with full video download support! 🎉

@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+README.md
+UPLOAD_TO_GITHUB.txt
+temp_videos
+selfbot_database.sqlite
+.local
+.cache
+.config
